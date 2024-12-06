@@ -19,6 +19,14 @@ export class LoginComponent {
   });
 
   constructor(private loginService: LoginService, private router: Router){}
+  
+  ngOnInit(): void {
+    const localToken = localStorage.getItem("token");
+
+    if(localToken != null && localToken != "undefined"){
+        this.router.navigateByUrl("/dashboard");
+    }
+  }
 
   onSubmit(): void {
     const userData = {
@@ -31,7 +39,7 @@ export class LoginComponent {
         (data) => {
           if(data.status){
             localStorage.setItem('token', data.data.token);
-            this.router.navigateByUrl("/dashboard/info");
+            this.router.navigateByUrl("/dashboard");
           }else{
             alert(data.message);
           }

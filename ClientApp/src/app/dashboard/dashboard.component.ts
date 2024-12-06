@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterLink, Router } from '@angular/router';
-import { UserListComponent } from '../user-list/user-list.component';
 import { UserService } from '../services/user/user.service';
 
 @Component({

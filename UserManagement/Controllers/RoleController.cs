@@ -9,6 +9,7 @@ namespace UserManagement.Controllers
     public class RoleController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
+
         public RoleController(RoleManager<IdentityRole> roleManager)
         {
             _roleManager = roleManager;

@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.Application.Dtos;
 using UserManagement.Core.Entities;
-using UserManagement.Application.Services;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
+using UserManagement.Application.Services.User;
 
 namespace UserManagement.Controllers
 {
@@ -16,24 +14,18 @@ namespace UserManagement.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly UserService _userService;
-        private readonly RoleService _roleService;
-        private readonly UserRoleService _userRoleService;
+        private readonly IUserService _userService;
         // need mapper
 
         public UserController(UserManager<User> userManager,
                               SignInManager<User> signInManager,
                               RoleManager<IdentityRole> roleManager,
-                              UserService userService,
-                              RoleService roleService, 
-                              UserRoleService userRoleService) 
+                              IUserService userService) 
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userService = userService;
-            _roleService = roleService;
             _roleManager = roleManager;
-            _userRoleService = userRoleService;
         }
 
 
@@ -60,33 +52,7 @@ namespace UserManagement.Controllers
                 return BadRequest(response);
             }
 
-            if(await _userManager.FindByEmailAsync(userRegDto.Email) == null)
-            {
-                // map the user dto object with user object
-                var user = new User();
-                user.Email = userRegDto.Email;
-                user.FirstName = userRegDto.FirstName;
-                user.LastName = userRegDto.LastName;
-                user.UserName = userRegDto.UserName;
-                user.isActive = false;
-
-                var result = await _userManager.CreateAsync(user, userRegDto.Password);
-
-                response.Message = "An error occur while register new user. Please try later.";
-
-                if (result.Succeeded)
-                {
-                    var roleResponse = await _userManager.AddToRoleAsync(user, role.Name);
-
-                    response.Status = true;
-                    response.Message = "User Created Successfully";
-                    response.Data = result;
-                }
-                else
-                {
-                    response.Errors = result.Errors;
-                }
-            }
+            response = await _userService.RegisterUser(userRegDto, role.Name);
 
             return Ok(response);
         }
@@ -94,20 +60,8 @@ namespace UserManagement.Controllers
         [HttpGet("list")]
         [Authorize]
         public async Task<IActionResult> GetUsers()
-        {
-            var response = new ApiResponse<object>();
-            response.Message = "Unable to access user list";
-            ClaimsPrincipal claimsPrincipal = this.User;
-
-            var user = await _userManager.GetUserAsync(this.User);
-            var role = await _userManager.GetRolesAsync(user);
-
-            if (role.Contains("Admin"))
-            {
-                response.Status = true;
-                response.Message = "";
-                response.Data = await _userManager.Users.ToListAsync();
-            }           
+        {        
+            var response = await _userService.GetUsers(this.User);
 
             return Ok(response);
         }
@@ -116,24 +70,7 @@ namespace UserManagement.Controllers
         [Authorize]
         public async Task<IActionResult> GetCurrentUserInfo()
         {
-            var response = new ApiResponse<object>();
-            response.Status = false;
-            response.Message = "An error occur while fetch the user info";
-          
-            var currentUser = await _userManager.GetUserAsync(this.User);
-
-            if (currentUser != null)
-            {
-                var roles = await _userManager.GetRolesAsync(currentUser);
-
-                response.Status = true;
-                response.Message = "";
-                response.Data = new
-                {
-                    User = currentUser,
-                    Role = roles
-                };
-            }
+            var response = await _userService.GetCurrentUserInfo(this.User);
 
             return Ok(response);
         }

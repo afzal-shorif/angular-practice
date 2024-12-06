@@ -7,6 +7,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { authGuard } from './guards/auth.guard';
 import { UserInfoComponent } from './user-info/user-info.component';
 import { adminGuardGuard } from './guards/admin-guard.guard';
+import { NoPageComponent } from './no-page/no-page.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -17,8 +18,8 @@ export const routes: Routes = [
         component: DashboardComponent, 
         children:[
         {
-             path: 'info', 
-             component: UserInfoComponent, 
+            path: '',
+            component: UserInfoComponent
         },
         {
             path: 'users', 
@@ -26,5 +27,9 @@ export const routes: Routes = [
         }], 
         canActivate: [authGuard]
     },
+    {
+        path:'**',
+        component: NoPageComponent
+    }
     //{path: 'user-list', component: UserListComponent}
 ];

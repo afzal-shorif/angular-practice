@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using UserManagement.Core.Entities;
 using UserManagement.Infrastructure.Data;
 
 namespace UserManagement.Infrastructure.Configurations
 {
     public class ServiceConfiguration
     {
-        public static void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services, string connectionString)
         {
-            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Data Source=(local);Initial Catalog=UserManagement;User Id=sa;Password=123456;Integrated Security=false;MultipleActiveResultSets=true;TrustServerCertificate=True;"));
-            //services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddIdentityApiEndpoints<User>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped<ApplicationDbContext>();
         }
     }
 }

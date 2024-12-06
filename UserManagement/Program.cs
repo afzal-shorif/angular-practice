@@ -1,9 +1,5 @@
 using UserManagement.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using UserManagement.Infrastructure.Data;
-using UserManagement.Infrastructure.Repositories;
-using UserManagement.Application.Interfaces;
-using UserManagement.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,11 +8,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//ServiceConfiguration.ConfigureServices(builder.Services);
-
-
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("cn1")));
-builder.Services.AddIdentityApiEndpoints<User>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+UserManagement.Infrastructure.Configurations.ServiceConfiguration.ConfigureServices(builder.Services, builder.Configuration.GetConnectionString("cn1"));
+UserManagement.Application.Configurations.ServiceConfiguration.ConfigureServices(builder.Services);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -38,7 +31,6 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true
     };
 });
-
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -79,18 +71,6 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddAuthorization();
-
-
-builder.Services.AddScoped<ApplicationDbContext>();
-
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<UserService>();
-
-builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
-builder.Services.AddScoped<UserRoleService>();
 
 builder.Services.AddCors(options => options.AddPolicy(
     name: "FrontendUI",
