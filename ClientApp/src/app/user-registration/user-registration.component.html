@@ -1,0 +1,144 @@
+<div class="reg-container">
+    <div class="form-wrapper">
+        <h2>User Registration</h2>
+        @if(errors){
+            @for(error of errors; track error.code){
+                <span class="batch-error">{{ error.description }}</span>
+            }
+        }
+        <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+          <div class="form-inline">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" formControlName="firstName"  class="form-control" />
+                @if(registrationForm.controls.firstName.invalid && (registrationForm.controls.firstName.touched || registrationForm.controls.firstName.dirty)){
+                    @if(registrationForm.controls.firstName.errors?.["required"]){
+                        <small class="error">First Name is required</small>
+                    }
+
+                    @if(registrationForm.controls.firstName.errors?.["minLength"]){
+                        <small class="error">Can not be &lt; 3 character</small>
+                    }
+
+                    @if(registrationForm.controls.firstName.errors?.["maxLength"]){
+                        <small class="error">Can not be &gt; 15 character</small>
+                    }                  
+                }
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" formControlName="lastName" class="form-control" />   
+                @if(registrationForm.controls.lastName.invalid && (registrationForm.controls.lastName.touched || registrationForm.controls.lastName.dirty)){
+                    @if(registrationForm.controls.lastName.errors?.["required"]){
+                        <small class="error">Last Name is required</small>
+                    }
+
+                    @if(registrationForm.controls.lastName.errors?.["minLength"]){
+                        <small class="error">Can not be &lt; 3 character</small>
+                    }
+
+                    @if(registrationForm.controls.lastName.errors?.["maxLength"]){
+                        <small class="error">Can not be &gt; 15 character</small>
+                    }                  
+                }
+            </div>
+          </div>
+    
+          <div class="form-inline">
+            <div class="form-group">
+                <label for="lastName">Username</label>
+                <input type="text" formControlName="username" class="form-control" />
+                @if(registrationForm.controls.username.invalid && (registrationForm.controls.username.touched || registrationForm.controls.username.dirty)){
+                    @if(registrationForm.controls.username.errors?.["required"]){
+                        <small class="error">Username is required</small>
+                    }
+
+                    @if(registrationForm.controls.username.errors?.["minLength"]){
+                        <small class="error">Can not be &lt; 3 character</small>
+                    }
+
+                    @if(registrationForm.controls.username.errors?.["maxLength"]){
+                        <small class="error">Can not be &gt; 15 character</small>
+                    }                  
+                }
+              </div>
+        
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" formControlName="email" class="form-control" />
+                @if(registrationForm.controls.email.invalid && (registrationForm.controls.email.touched || registrationForm.controls.email.dirty)){
+                    @if(registrationForm.controls.email.errors?.["required"]){
+                        <small class="error">Email is required</small>
+                    }
+                    @if(registrationForm.controls.email.errors?.["pattern"]){
+                        <small class="error">Invalid email format</small>
+                    }                  
+                }
+              </div>
+          </div>
+          
+          <div class="form-inline">
+            <div class="form-group">
+                <label for="email">Password</label>
+                <input type="password" formControlName="password" class="form-control" />
+                @if(registrationForm.controls.password.invalid && (registrationForm.controls.password.touched || registrationForm.controls.password.dirty)){
+                    @if(registrationForm.controls.password.errors?.["required"]){
+                        <small class="error">password is required</small>
+                    }
+
+                    @if(registrationForm.controls.password.errors?.["minLength"]){
+                        <small class="error">Can not be &lt; 8 character</small>
+                    }
+
+                    @if(registrationForm.controls.password.errors?.["maxLength"]){
+                        <small class="error">Can not be &gt; 15 character</small>
+                    }                  
+                }
+              </div>
+        
+              <div class="form-group">
+                <label for="email">Con-Password</label>
+                <input type="password" formControlName="conPassword" class="form-control" />
+                @if(registrationForm.controls.conPassword.invalid && (registrationForm.controls.conPassword.touched || registrationForm.controls.conPassword.dirty)){
+                    @if(registrationForm.controls.conPassword.errors?.["required"]){
+                        <small class="error">Con-Password is required</small>
+                    }
+
+                    @if(registrationForm.controls.conPassword.errors?.["minLength"]){
+                        <small class="error">Can not be &lt; 8 character</small>
+                    }
+
+                    @if(registrationForm.controls.conPassword.errors?.["maxLength"]){
+                        <small class="error">Can not be &gt; 15 character</small>
+                    }                  
+                }
+              </div>
+          </div>
+
+          <div class="form-inline">
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" class="form-control" formControlName="selectedRole">
+                  <option value="" disabled>Select a Role</option>
+                  @for(role of roles; track role.id){
+                    <option value="{{ role.id }}">{{role.name}}</option>
+                  }
+                </select>
+                
+                @if(registrationForm.controls.selectedRole.invalid && (registrationForm.controls.selectedRole.touched || registrationForm.controls.selectedRole.dirty)){
+                    @if(registrationForm.controls.selectedRole.errors?.["required"]){
+                        <small class="error">Please select a role</small>
+                    }             
+                }
+              </div>
+          </div>
+
+          
+          <div class="btn-container">
+            <button type="submit" class="btn btn-primary">Register</button>
+          </div>
+        </form>
+
+        <a routerLink="/login">Login</a>
+    </div>
+  </div>

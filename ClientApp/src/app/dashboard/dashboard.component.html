@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <h3 style="flex-grow: 1;">User Management</h3>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a routerLink="info" class="nav-link">Info</a>
+            </li>
+            @if(userRoles.includes("Admin")){
+                <li class="nav-item">
+                    <a routerLink="users" class="nav-link">Users</a>
+                </li>
+            }
+      </ul>
+      <div>
+        <button class="btn btn-outline-success my-2 my-sm-0" (click)="logout()">Logout</button>
+      </div>
+    </div>
+</nav>
+
+<div class="container">
+    @if(!isLoading){
+        <router-outlet></router-outlet>
+    }
+</div>

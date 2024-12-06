@@ -1,0 +1,20 @@
+.container{
+    width: 800px;
+    margin: 0 auto;
+    padding-top: 15px;
+}
+
+.batch{
+    color: white;
+    padding: 15px 10px;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.batch-active{
+    background: rgb(35, 148, 35);
+}
+
+.batch-deactive{
+    background: rgb(177, 30, 30);
+}

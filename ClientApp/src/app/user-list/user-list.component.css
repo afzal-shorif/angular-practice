@@ -1,0 +1,27 @@
+.user-list-table{
+    width: 100%;
+    border: 1px solid #cccc;
+    border-collapse: collapse;
+}
+
+td, th{
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #cccc;
+}
+
+.deactive{
+    color: #FFF;
+    background-color: #F00;
+    border: 1px solid #F00;
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+
+.active{
+    color: #FFF;
+    background-color: rgb(20, 163, 20);
+    border: 1px solid rgb(20, 163, 20);
+    padding: 5px 10px;
+    border-radius: 6px;
+}
