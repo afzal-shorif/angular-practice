@@ -1,3 +1,9 @@
+<div class="profile-picture-wrapper">
+	<div class="img-container" style="background-image: url('{{ profilePicture }}');">
+		<div class="change-image-text" (click)="changePicture()">Click to change Profile Picture</div>
+		<input type="file" name="profile-picture" class="" (change)="uploadPicture($event)" id="inputProfilePicture">
+	</div>
+</div>
 <table class="table">
     <tbody>
       <tr>

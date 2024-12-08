@@ -18,3 +18,23 @@
 .batch-deactive{
     background: rgb(177, 30, 30);
 }
+
+nav{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.right-content{
+	display: flex;
+	flex-flow: row;
+	gap: 10px;
+}
+
+.profile-picture-container{
+	border-radius: 100%;
+	overflow: hidden;
+}
+
+.profile-picture-container img{
+	width: 40px;
+}

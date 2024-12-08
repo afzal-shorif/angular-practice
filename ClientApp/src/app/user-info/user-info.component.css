@@ -1,0 +1,27 @@
+.profile-picture-wrapper{
+	display: flex; 
+	justify-content: center; 
+	margin-bottom: 30px;
+}
+
+.img-container {
+	width: 300px;
+	height: 300px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: end;
+}
+
+.img-container div{
+	background-color: #ffffff87;
+	padding-bottom: 30px;
+	width: 100%;
+	text-align: center;
+}
+
+.change-image-text{
+	cursor: pointer;
+}
