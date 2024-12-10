@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -11,21 +12,27 @@ export class LoginService {
     refresh: 'https://localhost:7266/api/auth/refresh'
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(loginInfo:any) : Observable<any>{
     return this.http.post(this.urls.login, loginInfo);
   }
 
   refresh(tokenInfo:any): Observable<any>{
-    const refreshToken = localStorage.getItem('refreshToken');
+
     return this.http.post<any>(this.urls.refresh, tokenInfo).pipe(
       tap((response) => {
-        localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
+        if(response.status){
+          localStorage.setItem('accessToken', response.data.accessToken);
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+        }else{
+          localStorage.clear();
+          this.router.navigateByUrl("/login");
+        }
       }),
       catchError((error) => {
-        console.error('Error refreshing access token:', error);
+        console.log('Error refreshing access token:', error);
+        this.router.navigateByUrl("/login");
         return throwError(error);
       })
     );

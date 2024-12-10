@@ -77,7 +77,7 @@ namespace UserManagement.Application.Services.Auth
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var tokenValidityMins = _configuration.GetValue<int>("JwtConfig:TokenValidityMins");
-            var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(tokenValidityMins);
+            var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(tokenValidityMins);
 
             var issuer = _configuration["JwtConfig:Issuer"];
             var audience = _configuration["JwtConfig:Audience"];
