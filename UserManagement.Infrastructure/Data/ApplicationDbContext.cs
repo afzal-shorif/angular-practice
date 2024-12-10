@@ -11,6 +11,7 @@ namespace UserManagement.Infrastructure.Data
     public class ApplicationDbContext : IdentityDbContext<User>
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<UserPhoto> UserPhotos { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { 

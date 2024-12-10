@@ -17,32 +17,45 @@ export class DashboardComponent {
 	constructor(private userService: UserService, private router: Router) { }
 
 	ngOnInit(): void {
-		this.getUserInfo();
+		this.userService.userInfo.subscribe(
+			(data) => {
+				this.user = data;
+			});
 
 		this.userService.getProfilePicture().subscribe(
 			(data: any) => {
 				this.profilePicture = data;
 			}
 		);
+
+		this.getUserInfo();
 	}
 
 	getUserInfo(): void {
 		this.userService.getUserInfo().subscribe(
 			(data: any): void => {
-				console.log(data);
 				if (data.status) {
 					// set the user role somewhere globally
-					this.user = data.data.user;
+					this.userService.setUserInfo(data.data.user);
 					this.userRoles = data.data.role;
+
 					localStorage.setItem('userInfo', JSON.stringify(this.user));
 					localStorage.setItem('roles', JSON.stringify(this.userRoles));
+
 					this.isLoading = false;
+
+					if(this.user.photo != null){
+						this.userService.setProfilePicture(this.user.photo.base64String);
+					}
+
+					
+					
 				} else {
 					alert(data.message);
 				}
 			},
 			(error) => {
-				console.log(error);
+				//console.log(error);
 			}
 		);
 	};
@@ -55,12 +68,13 @@ export class DashboardComponent {
 				if (data.status) {
 					localStorage.clear();
 					this.router.navigateByUrl("/login");
-				} else {
+				} else {					
 					alert(data.message);
 				}
 			},
 			(error) => {
-
+				localStorage.clear();
+				this.router.navigateByUrl("/login");
 			}
 		);
 	}

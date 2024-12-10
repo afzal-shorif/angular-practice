@@ -19,7 +19,7 @@ namespace UserManagement.Infrastructure.Repositories
             return await _context.Users.ToListAsync<User>();
         }
 
-        public async Task<User> UpdateUserInfo(User user)
+        public async Task<User> UpdateUserInfoAsync(User user)
         {
             try
             {
@@ -38,5 +38,60 @@ namespace UserManagement.Infrastructure.Repositories
                 return null;
             }     
         }
+
+        public async Task<UserPhoto> GetUserPhotoAsync(User user)
+        {
+            try
+            {
+                var result = await _context.UserPhotos.FirstOrDefaultAsync(u => u.UserId == user.Id);
+
+                return result;
+            }
+            catch (Exception ex) {
+                return null;
+            }
+        }
+
+        public async Task<UserPhoto> AddUserPhotoAsync(UserPhoto userPhoto)
+        {
+            try
+            {
+                var result = await _context.UserPhotos.AddAsync(userPhoto);
+                int changeId = _context.SaveChanges();
+
+                if (changeId > 0)
+                {
+                    return result.Entity;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }        
+        }
+
+        public async Task<UserPhoto> UpdateUserPhotoAsync(UserPhoto userPhoto)
+        {
+            try
+            {            
+                _context.UserPhotos.Attach(userPhoto);
+                int changeId = await _context.SaveChangesAsync();
+
+                if (changeId < 0)
+                {
+                    return null;
+                }
+
+                return userPhoto;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        
     }
 }

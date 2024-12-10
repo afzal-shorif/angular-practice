@@ -21,7 +21,7 @@ export class LoginComponent {
   constructor(private loginService: LoginService, private router: Router){}
   
   ngOnInit(): void {
-    const localToken = localStorage.getItem("token");
+    const localToken = localStorage.getItem("accessToken");
 
     if(localToken != null && localToken != "undefined"){
         this.router.navigateByUrl("/dashboard");
@@ -38,7 +38,8 @@ export class LoginComponent {
       this.loginService.login(userData).subscribe(
         (data) => {
           if(data.status){
-            localStorage.setItem('token', data.data.token);
+            localStorage.setItem('accessToken', data.data.accessToken);
+            localStorage.setItem('refreshToken', data. data.refreshToken);
             this.router.navigateByUrl("/dashboard");
           }else{
             alert(data.message);

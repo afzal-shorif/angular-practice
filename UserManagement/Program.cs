@@ -33,7 +33,10 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+}); ;
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -70,16 +73,17 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddAuthorization();
+
 
 builder.Services.AddCors(options => options.AddPolicy(
     name: "FrontendUI",
     policy =>
     {
-        policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     }
 ));
 
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 app.MapIdentityApi<User>();
@@ -92,12 +96,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("FrontendUI");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseCors("FrontendUI");
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -107,7 +111,7 @@ using (var scope = app.Services.CreateScope())
 
     foreach (var role in roles)
     {
-        if(!await roleManager.RoleExistsAsync(role))
+        if (!await roleManager.RoleExistsAsync(role))
         {
             await roleManager.CreateAsync(new IdentityRole(role));
         }

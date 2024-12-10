@@ -12,8 +12,8 @@ using UserManagement.Infrastructure.Data;
 namespace UserManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241205060306_RoleMigration")]
-    partial class RoleMigration
+    [Migration("20241209070547_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,26 +50,6 @@ namespace UserManagement.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "df643eba-13fc-4145-a77d-e5831ce17dd6",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "b0a0000e-2770-4002-919d-1b04318f4102",
-                            Name = "Super",
-                            NormalizedName = "SUPER"
-                        },
-                        new
-                        {
-                            Id = "feca1bcf-23c4-491e-8160-504c56a50c84",
-                            Name = "Regular",
-                            NormalizedName = "REGULAR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -254,6 +234,27 @@ namespace UserManagement.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("UserManagement.Core.Entities.UserPhoto", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Base64String")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserPhotos");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -302,6 +303,23 @@ namespace UserManagement.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserManagement.Core.Entities.UserPhoto", b =>
+                {
+                    b.HasOne("UserManagement.Core.Entities.User", "User")
+                        .WithOne("Photo")
+                        .HasForeignKey("UserManagement.Core.Entities.UserPhoto", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserManagement.Core.Entities.User", b =>
+                {
+                    b.Navigation("Photo")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

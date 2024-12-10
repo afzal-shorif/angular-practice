@@ -3,17 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using UserManagement.Application.Dtos;
 using UserManagement.Application.Interfaces;
-using UserEntity = UserManagement.Core.Entities;
+using UserManagement.Core.Entities;
+using Entity = UserManagement.Core.Entities;
 
 namespace UserManagement.Application.Services.User
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<UserEntity.User> _userManager;
+        private readonly UserManager<Entity.User> _userManager;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(UserManager<UserEntity.User> userManager)
+        public UserService(UserManager<Entity.User> userManager, IUserRepository userRepository)
         {
             _userManager = userManager;
+            _userRepository = userRepository;
         }
 
         public async Task<ApiResponse<object>> RegisterUser(UserRegistrationDto userRegDto, string userRole)
@@ -27,7 +30,7 @@ namespace UserManagement.Application.Services.User
             }
 
             // map the user dto object with user object
-            var user = new UserEntity.User();
+            var user = new Entity.User();
             user.Email = userRegDto.Email;
             user.FirstName = userRegDto.FirstName;
             user.LastName = userRegDto.LastName;
@@ -83,6 +86,7 @@ namespace UserManagement.Application.Services.User
             if (currentUser != null)
             {
                 var roles = await _userManager.GetRolesAsync(currentUser);
+                currentUser.Photo = await _userRepository.GetUserPhotoAsync(currentUser);
 
                 response.Status = true;
                 response.Message = "";
@@ -90,6 +94,60 @@ namespace UserManagement.Application.Services.User
                 {
                     User = currentUser,
                     Role = roles
+                };
+            }
+
+            return response;
+        }
+
+        public async Task<ApiResponse<object>> UpdateUserInfoAsync(Entity.User user, UpdateUserInfoDto userInfoDto)
+        {
+            var response = new ApiResponse<object>();
+            response.Status = false;
+            response.Message = "Unable to upload profile picture";
+
+            // if username and email is unique
+            user.FirstName = userInfoDto.FirstName;
+            user.LastName = userInfoDto.LastName;
+            user.UserName = userInfoDto.UserName;
+            user.Email = userInfoDto.Email;
+
+            var userResult = await _userManager.UpdateAsync(user);
+
+            if (!userResult.Succeeded)
+            {
+                response.Status = false;
+                response.Errors = userResult.Errors;
+                return response;
+            }
+
+
+            UserPhoto photoResult = null;
+
+            var previousPhoto = await _userRepository.GetUserPhotoAsync(user);
+
+            if(previousPhoto != null)
+            {
+                previousPhoto.Base64String = userInfoDto.Photo;
+                photoResult = await _userRepository.UpdateUserPhotoAsync(previousPhoto);
+
+            }
+            else
+            {
+                var userPhoto = new UserPhoto();
+                userPhoto.UserId = user.Id;
+                userPhoto.Base64String = userInfoDto.Photo;
+
+                photoResult = await _userRepository.AddUserPhotoAsync(userPhoto);
+            }   
+       
+            if (photoResult != null) 
+            {
+                response.Status = true;
+                response.Message = "";
+                response.Data = new
+                {
+                    User = user,
                 };
             }
 

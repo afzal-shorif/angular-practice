@@ -88,7 +88,6 @@ export class UserRegistrationComponent implements OnInit {
     
     
     if(!this.registrationForm.invalid){
-      console.log('User Registration Data:', userData);
       this.registrationService.registerUser(userData).subscribe(
         (data) => {
           if(data.status){

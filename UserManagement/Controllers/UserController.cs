@@ -70,6 +70,9 @@ namespace UserManagement.Controllers
         [Authorize]
         public async Task<IActionResult> GetCurrentUserInfo()
         {
+            //return BadRequest();
+            //return Unauthorized();
+            
             var response = await _userService.GetCurrentUserInfo(this.User);
 
             return Ok(response);
@@ -130,6 +133,32 @@ namespace UserManagement.Controllers
             response.Status = true;
             response.Message = "";
             response.Data = user;
+
+            return Ok(response);
+        }
+
+        [HttpPost("update/info")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserInfo([FromBody] UpdateUserInfoDto userInfoDto)
+        {
+            var response = new ApiResponse<object>();
+            response.Status = false;
+            response.Message = "An error occur while fetch the user info";
+
+            var currentUser = await _userManager.GetUserAsync(this.User);
+
+            if (currentUser == null)
+            {
+                return Ok(response);
+            }
+
+            if (userInfoDto == null)
+            {
+                response.Message = "Invalid request";
+                return Ok(response);
+            }
+
+            response  = await _userService.UpdateUserInfoAsync(currentUser, userInfoDto);
 
             return Ok(response);
         }

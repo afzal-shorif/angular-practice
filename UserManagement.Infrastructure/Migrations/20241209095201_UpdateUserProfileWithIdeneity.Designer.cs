@@ -12,8 +12,8 @@ using UserManagement.Infrastructure.Data;
 namespace UserManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241205060204_InitMigrationNew")]
-    partial class InitMigrationNew
+    [Migration("20241209095201_UpdateUserProfileWithIdeneity")]
+    partial class UpdateUserProfileWithIdeneity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,6 +234,28 @@ namespace UserManagement.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("UserManagement.Core.Entities.UserPhoto", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Base64String")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserPhotos");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -282,6 +304,23 @@ namespace UserManagement.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserManagement.Core.Entities.UserPhoto", b =>
+                {
+                    b.HasOne("UserManagement.Core.Entities.User", "User")
+                        .WithOne("Photo")
+                        .HasForeignKey("UserManagement.Core.Entities.UserPhoto", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserManagement.Core.Entities.User", b =>
+                {
+                    b.Navigation("Photo")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

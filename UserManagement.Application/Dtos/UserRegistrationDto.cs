@@ -32,7 +32,7 @@ namespace UserManagement.Application.Dtos
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(15, ErrorMessage = "Password can not be greater then 15 characture")]
         [MinLength(8, ErrorMessage = "Password should at least 8 character long")]
-        [Password(ErrorMessage = "Password should contain alphabet, numeric and special character")]
+        //[Password(ErrorMessage = "Password should contain alphabet, numeric and special character")]
         public string Password { get; set; } = string.Empty;
 
         [Required]

@@ -8,7 +8,8 @@ namespace UserManagement.Core.Entities
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public bool isActive { get; set; } = false;
-
-        //public UserRole UserRoles { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
+        public UserPhoto Photo { get; set; }
     }
 }

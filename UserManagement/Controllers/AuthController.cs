@@ -13,13 +13,18 @@ namespace UserManagement.Controllers
     {
         private readonly IAuthService _authService;
         private readonly SignInManager<User> _signInManager;
+        private readonly IConfiguration _configuration;
+        private readonly UserManager<User> _userManager;
 
         public AuthController(SignInManager<User> signInManager, 
-                            IAuthService authService) 
+                            IAuthService authService,
+                            IConfiguration configuration,
+                            UserManager<User> userManager) 
         {
             _signInManager = signInManager;
             _authService = authService;
-
+            _configuration = configuration;
+            _userManager = userManager;
         }
 
         [HttpPost("login")]
@@ -30,10 +35,41 @@ namespace UserManagement.Controllers
             if (!response.Status)
             {
                 return Ok(response);
-
             }
 
-            response.Data = await _authService.GetAccessToken(userLoginDto.UserName);
+            response.Data = new
+            {
+                AccessToken = await _authService.GenerateTokenAsync(userLoginDto.UserName, "access"),
+                RefreshToken = await _authService.GenerateTokenAsync(userLoginDto.UserName, "refresh"),
+            };
+
+            response.Status = true;
+            response.Message = "";
+
+            return Ok(response);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> GenerateAccessToken([FromBody] RefreshTokenRequest tokenRequest)
+        {
+            var response = new ApiResponse<object>();
+
+            var principal = _authService.GetPrincipalFromExpiredToken(tokenRequest.AccessToken);
+
+            var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+
+            if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now) 
+            {
+                response.Status = false;
+                response.Message = "Unable to access. Please login again.";
+                return Ok(response);
+            }           
+
+            response.Data = new
+            {
+                AccessToken = await _authService.GenerateTokenAsync(user.UserName, "access"),
+                RefreshToken = await _authService.GenerateTokenAsync(user.UserName, "refresh"),
+            };
 
             response.Status = true;
             response.Message = "";

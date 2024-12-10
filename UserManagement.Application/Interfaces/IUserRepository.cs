@@ -1,4 +1,5 @@
-﻿using UserManagement.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using UserManagement.Core.Entities;
 
 namespace UserManagement.Application.Interfaces
 {
@@ -6,6 +7,9 @@ namespace UserManagement.Application.Interfaces
     {
         Task<IList<User>> GetUsersAsync();
 
-        Task<User> UpdateUserInfo(User user);
+        Task<User> UpdateUserInfoAsync(User user);
+        Task<UserPhoto> GetUserPhotoAsync(User user);
+        Task<UserPhoto> AddUserPhotoAsync(UserPhoto userPhoto);
+        Task<UserPhoto> UpdateUserPhotoAsync(UserPhoto userPhoto);
     }
 }
